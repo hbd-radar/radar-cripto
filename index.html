@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radar Cripto — Tiro Supremo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
+  :root {
+    --bg: #060a0f;
+    --card: #0d1420;
+    --border: #1a2535;
+    --green: #00ff88;
+    --yellow: #ffcc00;
+    --red: #ff3355;
+    --black: #666;
+    --text: #c8d8e8;
+    --dim: #4a6080;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+  }
+  header {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #080c14;
+  }
+  .logo {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px;
+    color: var(--green);
+    letter-spacing: 2px;
+  }
+  .clock {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--dim);
+  }
+  .updating {
+    font-size: 11px;
+    color: var(--dim);
+    text-align: center;
+    padding: 6px;
+    letter-spacing: 1px;
+  }
+  .updating.active { color: var(--green); }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 12px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+  .card.BOM::before { background: var(--green); }
+  .card.PERIGOSO::before { background: var(--yellow); }
+  .card.ARRISCADO::before { background: var(--red); }
+  .card.ULTRA::before { background: #333; }
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .pair-name {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #fff;
+  }
+  .score-box {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 22px;
+    font-weight: bold;
+  }
+  .score-box.BOM { color: var(--green); }
+  .score-box.PERIGOSO { color: var(--yellow); }
+  .score-box.ARRISCADO { color: var(--red); }
+  .score-box.ULTRA { color: #444; }
+  .bar-bg {
+    background: #111a25;
+    border-radius: 4px;
+    height: 6px;
+    margin: 6px 0;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.8s ease;
+  }
+  .bar-fill.BOM { background: var(--green); }
+  .bar-fill.PERIGOSO { background: var(--yellow); }
+  .bar-fill.ARRISCADO { background: var(--red); }
+  .bar-fill.ULTRA { background: #333; }
+  .status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6px;
+  }
+  .status-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .status-label.BOM { color: var(--green); }
+  .status-label.PERIGOSO { color: var(--yellow); }
+  .status-label.ARRISCADO { color: var(--red); }
+  .status-label.ULTRA { color: #444; }
+  .price {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+  }
+  .trend {
+    font-size: 11px;
+    color: var(--dim);
+    margin-top: 4px;
+  }
+  .trend span { margin-right: 6px; }
+  .alert-bar {
+    margin: 0 12px 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border: 1px solid;
+    display: none;
+  }
+  .alert-bar.show { display: block; }
+  .alert-bar.BOM {
+    background: #001a0d;
+    border-color: var(--green);
+    color: var(--green);
+  }
+  .alert-bar.PERIGOSO {
+    background: #1a1400;
+    border-color: var(--yellow);
+    color: var(--yellow);
+  }
+  .loading {
+    text-align: center;
+    padding: 60px 20px;
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--dim);
+    font-size: 13px;
+    letter-spacing: 2px;
+  }
+  .dot { animation: blink 1s infinite; }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink {
+    0%,100% { opacity: 0.2; }
+    50% { opacity: 1; }
+  }
+  .error-msg {
+    text-align: center;
+    padding: 20px;
+    color: var(--red);
+    font-size: 13px;
+  }
+  footer {
+    text-align: center;
+    padding: 16px;
+    font-size: 11px;
+    color: var(--dim);
+    letter-spacing: 1px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">⬡ RADAR CRIPTO</div>
+  <div class="clock" id="clock">--:--:--</div>
+</header>
+
+<div class="updating" id="upd">● AGUARDANDO DADOS...</div>
+<div id="alert" class="alert-bar"></div>
+<div id="app"><div class="loading">CARREGANDO<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div></div>
+
+<footer>TIRO SUPREMO · EMA 10/21 · ATR 20 · ATUALIZA 30s</footer>
+
+<script>
+const PAIRS = [
+  'BTCUSDT','ETHUSDT','SOLUSDT','BNBUSDT','XRPUSDT',
+  'DOGEUSDT','ADAUSDT','AVAXUSDT','LINKUSDT','DOTUSDT'
+];
+const NAMES = {
+  BTCUSDT:'BTC',ETHUSDT:'ETH',SOLUSDT:'SOL',BNBUSDT:'BNB',XRPUSDT:'XRP',
+  DOGEUSDT:'DOGE',ADAUSDT:'ADA',AVAXUSDT:'AVAX',LINKUSDT:'LINK',DOTUSDT:'DOT'
+};
+
+function ema(arr, p) {
+  if(arr.length < p) return null;
+  const k = 2/(p+1);
+  let e = arr.slice(0,p).reduce((a,b)=>a+b,0)/p;
+  for(let i=p;i<arr.length;i++) e = arr[i]*k + e*(1-k);
+  return e;
+}
+
+function atr(candles, p=20) {
+  if(candles.length < p+1) return null;
+  const trs = [];
+  for(let i=1;i<candles.length;i++){
+    const h=+candles[i][2], l=+candles[i][3], pc=+candles[i-1][4];
+    trs.push(Math.max(h-l, Math.abs(h-pc), Math.abs(l-pc)));
+  }
+  const slice = trs.slice(-p);
+  return slice.reduce((a,b)=>a+b,0)/p;
+}
+
+function calcScore(candles) {
+  if(!candles || candles.length < 25) return null;
+  const prev = candles[candles.length-2];
+  const closes = candles.map(c=>+c[4]);
+  const e10 = ema(closes, 10);
+  const e21 = ema(closes, 21);
+  const atrNow = atr(candles, 20);
+  const atrSlice = candles.slice(-40);
+  const atrOld = atr(atrSlice, 20);
+  if(!e10||!e21||!atrNow||!atrOld) return null;
+
+  const open=+prev[1], high=+prev[2], low=+prev[3], close=+prev[4];
+  const body = Math.abs(close-open);
+  const upWick = high - Math.max(open,close);
+  const dnWick = Math.min(open,close) - low;
+  const atrRatio = atrNow / atrOld;
+
+  // Proteções
+  if(atrRatio > 2.0) return { score:5, stage:'ULTRA', e10, e21, atrRatio, price:close };
+  if(atrRatio < 0.5) return { score:15, stage:'ULTRA', e10, e21, atrRatio, price:close };
+
+  let score = 50;
+
+  // EMA trend
+  const emaDiff = (e10 - e21) / e21 * 100;
+  score += Math.min(20, Math.max(-20, emaDiff * 10));
+
+  // ATR ideal zone
+  if(atrRatio >= 0.7 && atrRatio <= 1.5) score += 15;
+  else if(atrRatio > 1.5) score -= 15;
+
+  // Wick rejection
+  if(body > 0) {
+    const wickRatio = Math.max(upWick, dnWick) / body;
+    if(wickRatio >= 1.5) score += 15;
+    else if(wickRatio >= 1.0) score += 8;
+  }
+
+  score = Math.max(0, Math.min(100, Math.round(score)));
+
+  let stage;
+  if(score >= 65) stage = 'BOM';
+  else if(score >= 40) stage = 'PERIGOSO';
+  else if(score >= 20) stage = 'ARRISCADO';
+  else stage = 'ULTRA';
+
+  return { score, stage, e10, e21, atrRatio, price: close };
+}
+
+const EMOJI = { BOM:'🟢', PERIGOSO:'🟡', ARRISCADO:'🔴', ULTRA:'⚫' };
+const MSG = {
+  BOM: 'Márcio, o mar está para peixe! 🎣',
+  PERIGOSO: 'Atenção — mercado nervoso.',
+  ARRISCADO: 'Risco alto. Aguarde.',
+  ULTRA: 'Toma o chimarrão ☕'
+};
+
+function renderCards(results) {
+  const app = document.getElementById('app');
+  const alert = document.getElementById('alert');
+
+  const best = results.filter(r=>r.data&&r.data.stage==='BOM');
+  if(best.length > 0) {
+    const names = best.map(r=>NAMES[r.pair]).join(', ');
+    alert.className = 'alert-bar show BOM';
+    alert.textContent = `${MSG.BOM} Oportunidade: ${names}`;
+  } else {
+    const danger = results.filter(r=>r.data&&r.data.stage==='PERIGOSO');
+    if(danger.length >= 7) {
+      alert.className = 'alert-bar show PERIGOSO';
+      alert.textContent = MSG.ULTRA;
+    } else {
+      alert.className = 'alert-bar';
+    }
+  }
+
+  app.innerHTML = '<div class="grid">' + results.map(r => {
+    if(!r.data) return `
+      <div class="card">
+        <div class="card-top">
+          <div class="pair-name">${NAMES[r.pair]}</div>
+          <div class="score-box" style="color:#333">--</div>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" style="width:0%"></div></div>
+        <div class="status-row">
+          <div class="status-label" style="color:#333">SEM DADOS</div>
+        </div>
+      </div>`;
+
+    const {score, stage, e10, e21, atrRatio, price} = r.data;
+    const trend = e10 > e21 ? '▲ ALTA' : '▼ BAIXA';
+    const trendColor = e10 > e21 ? '#00ff88' : '#ff3355';
+    const priceFmt = price > 100 ? price.toFixed(2) : price > 1 ? price.toFixed(4) : price.toFixed(6);
+
+    return `
+      <div class="card ${stage}">
+        <div class="card-top">
+          <div class="pair-name">${NAMES[r.pair]}</div>
+          <div class="score-box ${stage}">${score}</div>
+        </div>
+        <div class="bar-bg">
+          <div class="bar-fill ${stage}" style="width:${score}%"></div>
+        </div>
+        <div class="status-row">
+          <div class="status-label ${stage}">${EMOJI[stage]} ${stage}</div>
+          <div class="price">$${priceFmt}</div>
+        </div>
+        <div class="trend">
+          <span style="color:${trendColor}">${trend}</span>
+          <span>ATR ${atrRatio.toFixed(2)}x</span>
+        </div>
+      </div>`;
+  }).join('') + '</div>';
+}
+
+async function fetchPair(pair) {
+  try {
+    const res = await fetch(
+      `https://api.binance.com/api/v3/klines?symbol=${pair}&interval=1m&limit=50`
+    );
+    if(!res.ok) throw new Error('erro');
+    const data = await res.json();
+    return { pair, data: calcScore(data) };
+  } catch(e) {
+    return { pair, data: null };
+  }
+}
+
+async function update() {
+  const upd = document.getElementById('upd');
+  upd.textContent = '● ATUALIZANDO...';
+  upd.className = 'updating active';
+
+  const results = await Promise.all(PAIRS.map(fetchPair));
+  renderCards(results);
+
+  upd.className = 'updating';
+  const now = new Date();
+  const next = new Date(now.getTime() + 30000);
+  upd.textContent = `● PRÓXIMA ATUALIZAÇÃO ${next.toLocaleTimeString('pt-BR')}`;
+}
+
+function clock() {
+  document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString('pt-BR');
+}
+
+clock();
+setInterval(clock, 1000);
+update();
+setInterval(update, 30000);
+</script>
+</body>
+</html>
