@@ -11,188 +11,113 @@
     --card: #0d1420;
     --border: #1a2535;
     --green: #00ff88;
+    --green2: #00cc66;
     --yellow: #ffcc00;
     --red: #ff3355;
-    --black: #666;
-    --text: #c8d8e8;
     --dim: #4a6080;
+    --text: #c8d8e8;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Rajdhani', sans-serif;
-    min-height: 100vh;
-  }
+  body { background:var(--bg); color:var(--text); font-family:'Rajdhani',sans-serif; min-height:100vh; }
   header {
-    padding: 16px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #080c14;
+    padding:14px 16px;
+    border-bottom:1px solid var(--border);
+    display:flex; justify-content:space-between; align-items:center;
+    background:#080c14;
+    position:sticky; top:0; z-index:10;
   }
-  .logo {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 16px;
-    color: var(--green);
-    letter-spacing: 2px;
+  .logo { font-family:'Share Tech Mono',monospace; font-size:15px; color:var(--green); letter-spacing:3px; }
+  .clock { font-family:'Share Tech Mono',monospace; font-size:13px; color:var(--dim); }
+  .upd-bar {
+    text-align:center; padding:5px; font-size:11px;
+    letter-spacing:1px; color:var(--dim);
+    font-family:'Share Tech Mono',monospace;
+    border-bottom:1px solid var(--border);
   }
-  .clock {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    color: var(--dim);
+  .upd-bar.on { color:var(--green); }
+  .alert-box {
+    margin:10px 12px 0;
+    padding:10px 14px;
+    border-radius:8px;
+    font-size:13px; font-weight:600; letter-spacing:0.5px;
+    border:1px solid transparent;
+    display:none;
   }
-  .updating {
-    font-size: 11px;
-    color: var(--dim);
-    text-align: center;
-    padding: 6px;
-    letter-spacing: 1px;
-  }
-  .updating.active { color: var(--green); }
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    padding: 12px;
-  }
+  .alert-box.show { display:block; }
+  .alert-box.RARA    { background:#001a0d; border-color:var(--green);  color:var(--green); }
+  .alert-box.BOM     { background:#001408; border-color:var(--green2); color:var(--green2); }
+  .alert-box.PERIGOSO{ background:#1a1400; border-color:var(--yellow); color:var(--yellow); }
+  .alert-box.ULTRA   { background:#0a0a0a; border-color:#333;          color:#555; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:12px; }
   .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s;
+    background:var(--card); border:1px solid var(--border);
+    border-radius:10px; padding:12px;
+    position:relative; overflow:hidden; transition:all 0.4s;
   }
   .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--border);
-    transition: background 0.3s;
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    transition:background 0.4s;
   }
-  .card.BOM::before { background: var(--green); }
-  .card.PERIGOSO::before { background: var(--yellow); }
-  .card.ARRISCADO::before { background: var(--red); }
-  .card.ULTRA::before { background: #333; }
-  .card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
+  .card.RARA::before    { background:var(--green); box-shadow:0 0 8px var(--green); }
+  .card.BOM::before     { background:var(--green2); }
+  .card.PERIGOSO::before{ background:var(--yellow); }
+  .card.ARRISCADO::before{ background:var(--red); }
+  .card.ULTRA::before   { background:#222; }
+  .card-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .pair { font-size:20px; font-weight:700; color:#fff; letter-spacing:1px; }
+  .score {
+    font-family:'Share Tech Mono',monospace; font-size:24px; font-weight:bold;
+    transition:color 0.4s;
   }
-  .pair-name {
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: #fff;
+  .score.RARA     { color:var(--green); text-shadow:0 0 10px var(--green); }
+  .score.BOM      { color:var(--green2); }
+  .score.PERIGOSO { color:var(--yellow); }
+  .score.ARRISCADO{ color:var(--red); }
+  .score.ULTRA    { color:#333; }
+  .bar-bg { background:#0a1018; border-radius:4px; height:5px; margin:5px 0; overflow:hidden; }
+  .bar-fill { height:100%; border-radius:4px; transition:width 1s ease; }
+  .bar-fill.RARA     { background:var(--green); box-shadow:0 0 6px var(--green); }
+  .bar-fill.BOM      { background:var(--green2); }
+  .bar-fill.PERIGOSO { background:var(--yellow); }
+  .bar-fill.ARRISCADO{ background:var(--red); }
+  .bar-fill.ULTRA    { background:#222; }
+  .layers { display:flex; gap:3px; margin:5px 0; }
+  .layer-dot {
+    flex:1; height:3px; border-radius:2px; background:#0a1018;
+    transition:background 0.4s;
   }
-  .score-box {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 22px;
-    font-weight: bold;
+  .status-row { display:flex; justify-content:space-between; align-items:center; margin-top:4px; }
+  .stage-lbl {
+    font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
   }
-  .score-box.BOM { color: var(--green); }
-  .score-box.PERIGOSO { color: var(--yellow); }
-  .score-box.ARRISCADO { color: var(--red); }
-  .score-box.ULTRA { color: #444; }
-  .bar-bg {
-    background: #111a25;
-    border-radius: 4px;
-    height: 6px;
-    margin: 6px 0;
-    overflow: hidden;
-  }
-  .bar-fill {
-    height: 100%;
-    border-radius: 4px;
-    transition: width 0.8s ease;
-  }
-  .bar-fill.BOM { background: var(--green); }
-  .bar-fill.PERIGOSO { background: var(--yellow); }
-  .bar-fill.ARRISCADO { background: var(--red); }
-  .bar-fill.ULTRA { background: #333; }
-  .status-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 6px;
-  }
-  .status-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-  .status-label.BOM { color: var(--green); }
-  .status-label.PERIGOSO { color: var(--yellow); }
-  .status-label.ARRISCADO { color: var(--red); }
-  .status-label.ULTRA { color: #444; }
-  .price {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: var(--dim);
-  }
-  .trend {
-    font-size: 11px;
-    color: var(--dim);
-    margin-top: 4px;
-  }
-  .trend span { margin-right: 6px; }
-  .alert-bar {
-    margin: 0 12px 12px;
-    padding: 10px 14px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    border: 1px solid;
-    display: none;
-  }
-  .alert-bar.show { display: block; }
-  .alert-bar.BOM {
-    background: #001a0d;
-    border-color: var(--green);
-    color: var(--green);
-  }
-  .alert-bar.PERIGOSO {
-    background: #1a1400;
-    border-color: var(--yellow);
-    color: var(--yellow);
-  }
+  .stage-lbl.RARA     { color:var(--green); }
+  .stage-lbl.BOM      { color:var(--green2); }
+  .stage-lbl.PERIGOSO { color:var(--yellow); }
+  .stage-lbl.ARRISCADO{ color:var(--red); }
+  .stage-lbl.ULTRA    { color:#333; }
+  .price { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--dim); }
+  .meta  { font-size:10px; color:var(--dim); margin-top:3px; display:flex; gap:8px; }
   .loading {
-    text-align: center;
-    padding: 60px 20px;
-    font-family: 'Share Tech Mono', monospace;
-    color: var(--dim);
-    font-size: 13px;
-    letter-spacing: 2px;
+    text-align:center; padding:60px 20px;
+    font-family:'Share Tech Mono',monospace; color:var(--dim); font-size:13px; letter-spacing:2px;
   }
-  .dot { animation: blink 1s infinite; }
-  .dot:nth-child(2) { animation-delay: 0.2s; }
-  .dot:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes blink {
-    0%,100% { opacity: 0.2; }
-    50% { opacity: 1; }
-  }
-  .error-msg {
-    text-align: center;
-    padding: 20px;
-    color: var(--red);
-    font-size: 13px;
-  }
+  .dot { animation:blink 1s infinite; }
+  .dot:nth-child(2){ animation-delay:.2s; }
+  .dot:nth-child(3){ animation-delay:.4s; }
+  @keyframes blink{ 0%,100%{opacity:.2} 50%{opacity:1} }
   footer {
-    text-align: center;
-    padding: 16px;
-    font-size: 11px;
-    color: var(--dim);
-    letter-spacing: 1px;
-    border-top: 1px solid var(--border);
-    margin-top: 8px;
+    text-align:center; padding:14px; font-size:10px;
+    color:var(--dim); letter-spacing:1px;
+    border-top:1px solid var(--border); margin-top:4px;
+    font-family:'Share Tech Mono',monospace;
   }
+  .legend {
+    display:flex; justify-content:center; gap:12px;
+    padding:8px 12px; font-size:10px; color:var(--dim);
+    flex-wrap:wrap;
+  }
+  .legend span { display:flex; align-items:center; gap:4px; }
+  .leg-dot { width:7px; height:7px; border-radius:50%; display:inline-block; }
 </style>
 </head>
 <body>
@@ -202,23 +127,26 @@
   <div class="clock" id="clock">--:--:--</div>
 </header>
 
-<div class="updating" id="upd">● AGUARDANDO DADOS...</div>
-<div id="alert" class="alert-bar"></div>
+<div class="upd-bar" id="upd">● AGUARDANDO...</div>
+
+<div class="legend">
+  <span><span class="leg-dot" style="background:#00ff88"></span>RARA 85+</span>
+  <span><span class="leg-dot" style="background:#00cc66"></span>BOM 65+</span>
+  <span><span class="leg-dot" style="background:#ffcc00"></span>PERIGOSO 40+</span>
+  <span><span class="leg-dot" style="background:#ff3355"></span>ARRISCADO 20+</span>
+  <span><span class="leg-dot" style="background:#333"></span>ULTRA &lt;20</span>
+</div>
+
+<div id="alert" class="alert-box"></div>
 <div id="app"><div class="loading">CARREGANDO<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div></div>
 
-<footer>TIRO SUPREMO · EMA 10/21 · ATR 20 · ATUALIZA 30s</footer>
+<footer>TIRO SUPREMO · 5 CAMADAS · EMA 10/21 · ATR 20 · WICK · MOMENTUM · 30s</footer>
 
 <script>
-const PAIRS = [
-  'BTCUSDT','ETHUSDT','SOLUSDT','BNBUSDT','XRPUSDT',
-  'DOGEUSDT','ADAUSDT','AVAXUSDT','LINKUSDT','DOTUSDT'
-];
-const NAMES = {
-  BTCUSDT:'BTC',ETHUSDT:'ETH',SOLUSDT:'SOL',BNBUSDT:'BNB',XRPUSDT:'XRP',
-  DOGEUSDT:'DOGE',ADAUSDT:'ADA',AVAXUSDT:'AVAX',LINKUSDT:'LINK',DOTUSDT:'DOT'
-};
+const PAIRS = ['BTCUSDT','ETHUSDT','SOLUSDT','BNBUSDT','XRPUSDT','DOGEUSDT','ADAUSDT','AVAXUSDT','LINKUSDT','DOTUSDT'];
+const NAMES = {BTCUSDT:'BTC',ETHUSDT:'ETH',SOLUSDT:'SOL',BNBUSDT:'BNB',XRPUSDT:'XRP',DOGEUSDT:'DOGE',ADAUSDT:'ADA',AVAXUSDT:'AVAX',LINKUSDT:'LINK',DOTUSDT:'DOT'};
 
-function ema(arr, p) {
+function calcEMA(arr, p) {
   if(arr.length < p) return null;
   const k = 2/(p+1);
   let e = arr.slice(0,p).reduce((a,b)=>a+b,0)/p;
@@ -226,168 +154,117 @@ function ema(arr, p) {
   return e;
 }
 
-function atr(candles, p=20) {
-  if(candles.length < p+1) return null;
+function emaLayer(closes) {
+  const e10 = calcEMA(closes, 10);
+  const e21 = calcEMA(closes, 21);
+  if(!e10||!e21) return { pts:0, e10:0, e21:0, bullish:false };
+  const dist = (e10 - e21) / e21 * 100;
+  const bullish = e10 > e21;
+  const raw = bullish ? Math.min(25, (dist / 0.5) * 25) : 0;
+  return { pts: Math.max(0, raw), e10, e21, bullish, dist };
+}
+
+function slopeLayer(closes) {
+  if(closes.length < 13) return { pts:0, slope:0 };
+  const e_now  = calcEMA(closes, 10);
+  const e_prev = calcEMA(closes.slice(0,-1), 10);
+  const e_pp   = calcEMA(closes.slice(0,-2), 10);
+  if(!e_now||!e_prev||!e_pp) return { pts:0, slope:0 };
+  const slope1 = e_now  - e_prev;
+  const slope2 = e_prev - e_pp;
+  const accel  = slope1 - slope2;
+  const slope  = slope1 / e_pp * 100;
+  let pts = 0;
+  if(slope > 0) pts = Math.min(20, (slope / 0.05) * 20);
+  if(accel > 0) pts = Math.min(20, pts * 1.2);
+  return { pts: Math.max(0, pts), slope };
+}
+
+function atrLayer(candles) {
+  if(candles.length < 42) return { pts:0, ratio:1 };
   const trs = [];
   for(let i=1;i<candles.length;i++){
     const h=+candles[i][2], l=+candles[i][3], pc=+candles[i-1][4];
     trs.push(Math.max(h-l, Math.abs(h-pc), Math.abs(l-pc)));
   }
-  const slice = trs.slice(-p);
-  return slice.reduce((a,b)=>a+b,0)/p;
+  const atrNow  = trs.slice(-20).reduce((a,b)=>a+b,0)/20;
+  const atrBase = trs.slice(-40,-20).reduce((a,b)=>a+b,0)/20;
+  if(!atrBase) return { pts:0, ratio:1 };
+  const ratio = atrNow / atrBase;
+  let pts = 0;
+  if(ratio < 0.5)                        pts = 0;
+  else if(ratio > 2.0)                   pts = 0;
+  else if(ratio >= 0.7 && ratio <= 1.4)  pts = 20;
+  else if(ratio >= 0.5 && ratio < 0.7)   pts = ((ratio-0.5)/0.2)*20;
+  else if(ratio > 1.4 && ratio <= 2.0)   pts = ((2.0-ratio)/0.6)*20;
+  return { pts, ratio };
+}
+
+function wickLayer(candles, bullish) {
+  const prev = candles[candles.length-2];
+  if(!prev) return { pts:0, wick:0 };
+  const o=+prev[1], h=+prev[2], l=+prev[3], c=+prev[4];
+  const body = Math.abs(c-o);
+  if(body === 0) return { pts:0, wick:0 };
+  const upWick = h - Math.max(o,c);
+  const dnWick = Math.min(o,c) - l;
+  const relevantWick = bullish ? dnWick : upWick;
+  const ratio = relevantWick / body;
+  let pts = 0;
+  if(ratio >= 2.0)      pts = 25;
+  else if(ratio >= 1.5) pts = 18;
+  else if(ratio >= 1.0) pts = 10;
+  else if(ratio >= 0.5) pts = 4;
+  return { pts, wick: ratio };
+}
+
+function momentumLayer(candles, bullish) {
+  const prev = candles[candles.length-2];
+  if(!prev) return { pts:0, mom:0 };
+  const h=+prev[2], l=+prev[3], c=+prev[4];
+  const range = h - l;
+  if(range === 0) return { pts:0, mom:0 };
+  const pos = (c - l) / range;
+  let pts = 0;
+  if(bullish) pts = pos >= 0.7 ? 10 : pos >= 0.5 ? 5 : 0;
+  else        pts = pos <= 0.3 ? 10 : pos <= 0.5 ? 5 : 0;
+  return { pts, mom: pos };
 }
 
 function calcScore(candles) {
-  if(!candles || candles.length < 25) return null;
-  const prev = candles[candles.length-2];
+  if(!candles || candles.length < 45) return null;
   const closes = candles.map(c=>+c[4]);
-  const e10 = ema(closes, 10);
-  const e21 = ema(closes, 21);
-  const atrNow = atr(candles, 20);
-  const atrSlice = candles.slice(-40);
-  const atrOld = atr(atrSlice, 20);
-  if(!e10||!e21||!atrNow||!atrOld) return null;
+  const L1 = emaLayer(closes);
+  const L3 = atrLayer(candles);
+  if(L3.ratio > 2.0) return buildResult(3,  L1, {pts:0,slope:0}, L3, {pts:0,wick:0}, {pts:0,mom:0}, candles);
+  if(L3.ratio < 0.4) return buildResult(8,  L1, {pts:0,slope:0}, L3, {pts:0,wick:0}, {pts:0,mom:0}, candles);
+  if(!L1.bullish)    return buildResult(null,L1, {pts:0,slope:0}, L3, {pts:0,wick:0}, {pts:0,mom:0}, candles);
+  const L2 = slopeLayer(closes);
+  const L4 = wickLayer(candles, L1.bullish);
+  const L5 = momentumLayer(candles, L1.bullish);
+  const total = L1.pts + L2.pts + L3.pts + L4.pts + L5.pts;
+  return buildResult(total, L1, L2, L3, L4, L5, candles);
+}
 
-  const open=+prev[1], high=+prev[2], low=+prev[3], close=+prev[4];
-  const body = Math.abs(close-open);
-  const upWick = high - Math.max(open,close);
-  const dnWick = Math.min(open,close) - low;
-  const atrRatio = atrNow / atrOld;
-
-  // Proteções
-  if(atrRatio > 2.0) return { score:5, stage:'ULTRA', e10, e21, atrRatio, price:close };
-  if(atrRatio < 0.5) return { score:15, stage:'ULTRA', e10, e21, atrRatio, price:close };
-
-  let score = 50;
-
-  // EMA trend
-  const emaDiff = (e10 - e21) / e21 * 100;
-  score += Math.min(20, Math.max(-20, emaDiff * 10));
-
-  // ATR ideal zone
-  if(atrRatio >= 0.7 && atrRatio <= 1.5) score += 15;
-  else if(atrRatio > 1.5) score -= 15;
-
-  // Wick rejection
-  if(body > 0) {
-    const wickRatio = Math.max(upWick, dnWick) / body;
-    if(wickRatio >= 1.5) score += 15;
-    else if(wickRatio >= 1.0) score += 8;
-  }
-
-  score = Math.max(0, Math.min(100, Math.round(score)));
-
+function buildResult(total, L1, L2, L3, L4, L5, candles) {
+  const price = +candles[candles.length-1][4];
+  const score = total === null
+    ? Math.round(L1.pts + L3.pts)
+    : Math.round(Math.min(100, Math.max(0, total)));
   let stage;
-  if(score >= 65) stage = 'BOM';
+  if(score >= 85)      stage = 'RARA';
+  else if(score >= 65) stage = 'BOM';
   else if(score >= 40) stage = 'PERIGOSO';
   else if(score >= 20) stage = 'ARRISCADO';
-  else stage = 'ULTRA';
-
-  return { score, stage, e10, e21, atrRatio, price: close };
+  else                 stage = 'ULTRA';
+  return {
+    score, stage, price,
+    bullish: L1.bullish,
+    atrRatio: L3.ratio,
+    wick: L4.wick || 0,
+    layers: [Math.round(L1.pts), Math.round(L2.pts), Math.round(L3.pts), Math.round(L4.pts), Math.round(L5.pts)]
+  };
 }
 
-const EMOJI = { BOM:'🟢', PERIGOSO:'🟡', ARRISCADO:'🔴', ULTRA:'⚫' };
-const MSG = {
-  BOM: 'Márcio, o mar está para peixe! 🎣',
-  PERIGOSO: 'Atenção — mercado nervoso.',
-  ARRISCADO: 'Risco alto. Aguarde.',
-  ULTRA: 'Toma o chimarrão ☕'
-};
-
-function renderCards(results) {
-  const app = document.getElementById('app');
-  const alert = document.getElementById('alert');
-
-  const best = results.filter(r=>r.data&&r.data.stage==='BOM');
-  if(best.length > 0) {
-    const names = best.map(r=>NAMES[r.pair]).join(', ');
-    alert.className = 'alert-bar show BOM';
-    alert.textContent = `${MSG.BOM} Oportunidade: ${names}`;
-  } else {
-    const danger = results.filter(r=>r.data&&r.data.stage==='PERIGOSO');
-    if(danger.length >= 7) {
-      alert.className = 'alert-bar show PERIGOSO';
-      alert.textContent = MSG.ULTRA;
-    } else {
-      alert.className = 'alert-bar';
-    }
-  }
-
-  app.innerHTML = '<div class="grid">' + results.map(r => {
-    if(!r.data) return `
-      <div class="card">
-        <div class="card-top">
-          <div class="pair-name">${NAMES[r.pair]}</div>
-          <div class="score-box" style="color:#333">--</div>
-        </div>
-        <div class="bar-bg"><div class="bar-fill" style="width:0%"></div></div>
-        <div class="status-row">
-          <div class="status-label" style="color:#333">SEM DADOS</div>
-        </div>
-      </div>`;
-
-    const {score, stage, e10, e21, atrRatio, price} = r.data;
-    const trend = e10 > e21 ? '▲ ALTA' : '▼ BAIXA';
-    const trendColor = e10 > e21 ? '#00ff88' : '#ff3355';
-    const priceFmt = price > 100 ? price.toFixed(2) : price > 1 ? price.toFixed(4) : price.toFixed(6);
-
-    return `
-      <div class="card ${stage}">
-        <div class="card-top">
-          <div class="pair-name">${NAMES[r.pair]}</div>
-          <div class="score-box ${stage}">${score}</div>
-        </div>
-        <div class="bar-bg">
-          <div class="bar-fill ${stage}" style="width:${score}%"></div>
-        </div>
-        <div class="status-row">
-          <div class="status-label ${stage}">${EMOJI[stage]} ${stage}</div>
-          <div class="price">$${priceFmt}</div>
-        </div>
-        <div class="trend">
-          <span style="color:${trendColor}">${trend}</span>
-          <span>ATR ${atrRatio.toFixed(2)}x</span>
-        </div>
-      </div>`;
-  }).join('') + '</div>';
-}
-
-async function fetchPair(pair) {
-  try {
-    const res = await fetch(
-      `https://api.binance.com/api/v3/klines?symbol=${pair}&interval=1m&limit=50`
-    );
-    if(!res.ok) throw new Error('erro');
-    const data = await res.json();
-    return { pair, data: calcScore(data) };
-  } catch(e) {
-    return { pair, data: null };
-  }
-}
-
-async function update() {
-  const upd = document.getElementById('upd');
-  upd.textContent = '● ATUALIZANDO...';
-  upd.className = 'updating active';
-
-  const results = await Promise.all(PAIRS.map(fetchPair));
-  renderCards(results);
-
-  upd.className = 'updating';
-  const now = new Date();
-  const next = new Date(now.getTime() + 30000);
-  upd.textContent = `● PRÓXIMA ATUALIZAÇÃO ${next.toLocaleTimeString('pt-BR')}`;
-}
-
-function clock() {
-  document.getElementById('clock').textContent =
-    new Date().toLocaleTimeString('pt-BR');
-}
-
-clock();
-setInterval(clock, 1000);
-update();
-setInterval(update, 30000);
-</script>
-</body>
-</html>
+const EMOJI = { RARA:'🎯', BOM:'🟢', PERIGOSO:'🟡', ARRISCADO:'🔴', ULTRA:'⚫' };
+const LAYER_COLOR
