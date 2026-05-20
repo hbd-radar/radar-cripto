@@ -3,268 +3,191 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Radar Cripto — Tiro Supremo</title>
+<title>Radar Cripto</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
-  :root {
-    --bg: #060a0f;
-    --card: #0d1420;
-    --border: #1a2535;
-    --green: #00ff88;
-    --green2: #00cc66;
-    --yellow: #ffcc00;
-    --red: #ff3355;
-    --dim: #4a6080;
-    --text: #c8d8e8;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--bg); color:var(--text); font-family:'Rajdhani',sans-serif; min-height:100vh; }
-  header {
-    padding:14px 16px;
-    border-bottom:1px solid var(--border);
-    display:flex; justify-content:space-between; align-items:center;
-    background:#080c14;
-    position:sticky; top:0; z-index:10;
-  }
-  .logo { font-family:'Share Tech Mono',monospace; font-size:15px; color:var(--green); letter-spacing:3px; }
-  .clock { font-family:'Share Tech Mono',monospace; font-size:13px; color:var(--dim); }
-  .upd-bar {
-    text-align:center; padding:5px; font-size:11px;
-    letter-spacing:1px; color:var(--dim);
-    font-family:'Share Tech Mono',monospace;
-    border-bottom:1px solid var(--border);
-  }
-  .upd-bar.on { color:var(--green); }
-  .alert-box {
-    margin:10px 12px 0;
-    padding:10px 14px;
-    border-radius:8px;
-    font-size:13px; font-weight:600; letter-spacing:0.5px;
-    border:1px solid transparent;
-    display:none;
-  }
-  .alert-box.show { display:block; }
-  .alert-box.RARA    { background:#001a0d; border-color:var(--green);  color:var(--green); }
-  .alert-box.BOM     { background:#001408; border-color:var(--green2); color:var(--green2); }
-  .alert-box.PERIGOSO{ background:#1a1400; border-color:var(--yellow); color:var(--yellow); }
-  .alert-box.ULTRA   { background:#0a0a0a; border-color:#333;          color:#555; }
-  .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:12px; }
-  .card {
-    background:var(--card); border:1px solid var(--border);
-    border-radius:10px; padding:12px;
-    position:relative; overflow:hidden; transition:all 0.4s;
-  }
-  .card::before {
-    content:''; position:absolute; top:0; left:0; right:0; height:3px;
-    transition:background 0.4s;
-  }
-  .card.RARA::before    { background:var(--green); box-shadow:0 0 8px var(--green); }
-  .card.BOM::before     { background:var(--green2); }
-  .card.PERIGOSO::before{ background:var(--yellow); }
-  .card.ARRISCADO::before{ background:var(--red); }
-  .card.ULTRA::before   { background:#222; }
-  .card-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
-  .pair { font-size:20px; font-weight:700; color:#fff; letter-spacing:1px; }
-  .score {
-    font-family:'Share Tech Mono',monospace; font-size:24px; font-weight:bold;
-    transition:color 0.4s;
-  }
-  .score.RARA     { color:var(--green); text-shadow:0 0 10px var(--green); }
-  .score.BOM      { color:var(--green2); }
-  .score.PERIGOSO { color:var(--yellow); }
-  .score.ARRISCADO{ color:var(--red); }
-  .score.ULTRA    { color:#333; }
-  .bar-bg { background:#0a1018; border-radius:4px; height:5px; margin:5px 0; overflow:hidden; }
-  .bar-fill { height:100%; border-radius:4px; transition:width 1s ease; }
-  .bar-fill.RARA     { background:var(--green); box-shadow:0 0 6px var(--green); }
-  .bar-fill.BOM      { background:var(--green2); }
-  .bar-fill.PERIGOSO { background:var(--yellow); }
-  .bar-fill.ARRISCADO{ background:var(--red); }
-  .bar-fill.ULTRA    { background:#222; }
-  .layers { display:flex; gap:3px; margin:5px 0; }
-  .layer-dot {
-    flex:1; height:3px; border-radius:2px; background:#0a1018;
-    transition:background 0.4s;
-  }
-  .status-row { display:flex; justify-content:space-between; align-items:center; margin-top:4px; }
-  .stage-lbl {
-    font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
-  }
-  .stage-lbl.RARA     { color:var(--green); }
-  .stage-lbl.BOM      { color:var(--green2); }
-  .stage-lbl.PERIGOSO { color:var(--yellow); }
-  .stage-lbl.ARRISCADO{ color:var(--red); }
-  .stage-lbl.ULTRA    { color:#333; }
-  .price { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--dim); }
-  .meta  { font-size:10px; color:var(--dim); margin-top:3px; display:flex; gap:8px; }
-  .loading {
-    text-align:center; padding:60px 20px;
-    font-family:'Share Tech Mono',monospace; color:var(--dim); font-size:13px; letter-spacing:2px;
-  }
-  .dot { animation:blink 1s infinite; }
-  .dot:nth-child(2){ animation-delay:.2s; }
-  .dot:nth-child(3){ animation-delay:.4s; }
-  @keyframes blink{ 0%,100%{opacity:.2} 50%{opacity:1} }
-  footer {
-    text-align:center; padding:14px; font-size:10px;
-    color:var(--dim); letter-spacing:1px;
-    border-top:1px solid var(--border); margin-top:4px;
-    font-family:'Share Tech Mono',monospace;
-  }
-  .legend {
-    display:flex; justify-content:center; gap:12px;
-    padding:8px 12px; font-size:10px; color:var(--dim);
-    flex-wrap:wrap;
-  }
-  .legend span { display:flex; align-items:center; gap:4px; }
-  .leg-dot { width:7px; height:7px; border-radius:50%; display:inline-block; }
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@600;700&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#060a0f;color:#c8d8e8;font-family:'Rajdhani',sans-serif;min-height:100vh}
+  header{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;background:#080c14;border-bottom:1px solid #1a2535;position:sticky;top:0;z-index:10}
+  .logo{font-family:'Share Tech Mono',monospace;font-size:14px;color:#00ff88;letter-spacing:3px}
+  .clock{font-family:'Share Tech Mono',monospace;font-size:12px;color:#4a6080}
+  .upd{text-align:center;padding:5px;font-size:11px;color:#4a6080;font-family:'Share Tech Mono',monospace;border-bottom:1px solid #1a2535}
+  .upd.on{color:#00ff88}
+  .legend{display:flex;justify-content:center;gap:10px;padding:6px 12px;font-size:10px;color:#4a6080;flex-wrap:wrap}
+  .ld{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:3px}
+  .alert{margin:10px 12px 0;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;border:1px solid transparent;display:none}
+  .alert.show{display:block}
+  .alert.RARA{background:#001a0d;border-color:#00ff88;color:#00ff88}
+  .alert.BOM{background:#001408;border-color:#00cc66;color:#00cc66}
+  .alert.PERIGOSO{background:#1a1400;border-color:#ffcc00;color:#ffcc00}
+  .alert.ULTRA{background:#0a0a0a;border-color:#333;color:#555}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
+  .card{background:#0d1420;border:1px solid #1a2535;border-radius:10px;padding:12px;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+  .card.RARA::before{background:#00ff88;box-shadow:0 0 8px #00ff88}
+  .card.BOM::before{background:#00cc66}
+  .card.PERIGOSO::before{background:#ffcc00}
+  .card.ARRISCADO::before{background:#ff3355}
+  .card.ULTRA::before{background:#222}
+  .card.VAZIO::before{background:#1a2535}
+  .ct{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .pair{font-size:20px;font-weight:700;color:#fff}
+  .sc{font-family:'Share Tech Mono',monospace;font-size:24px;font-weight:bold}
+  .sc.RARA{color:#00ff88;text-shadow:0 0 8px #00ff88}
+  .sc.BOM{color:#00cc66}
+  .sc.PERIGOSO{color:#ffcc00}
+  .sc.ARRISCADO{color:#ff3355}
+  .sc.ULTRA{color:#333}
+  .bar{background:#0a1018;border-radius:4px;height:5px;margin:5px 0;overflow:hidden}
+  .bf{height:100%;border-radius:4px;transition:width 1s ease}
+  .bf.RARA{background:#00ff88;box-shadow:0 0 6px #00ff88}
+  .bf.BOM{background:#00cc66}
+  .bf.PERIGOSO{background:#ffcc00}
+  .bf.ARRISCADO{background:#ff3355}
+  .bf.ULTRA{background:#222}
+  .sr{display:flex;justify-content:space-between;align-items:center;margin-top:4px}
+  .sl{font-size:10px;font-weight:700;letter-spacing:2px}
+  .sl.RARA{color:#00ff88}
+  .sl.BOM{color:#00cc66}
+  .sl.PERIGOSO{color:#ffcc00}
+  .sl.ARRISCADO{color:#ff3355}
+  .sl.ULTRA{color:#333}
+  .pr{font-family:'Share Tech Mono',monospace;font-size:10px;color:#4a6080}
+  .mt{font-size:10px;color:#4a6080;margin-top:3px;display:flex;gap:8px}
+  .dots{display:flex;gap:3px;margin:5px 0}
+  .dot{flex:1;height:3px;border-radius:2px;background:#0a1018}
+  footer{text-align:center;padding:12px;font-size:10px;color:#4a6080;letter-spacing:1px;border-top:1px solid #1a2535;margin-top:4px;font-family:'Share Tech Mono',monospace}
 </style>
 </head>
 <body>
-
 <header>
   <div class="logo">⬡ RADAR CRIPTO</div>
   <div class="clock" id="clock">--:--:--</div>
 </header>
-
-<div class="upd-bar" id="upd">● AGUARDANDO...</div>
-
+<div class="upd" id="upd">● AGUARDANDO...</div>
 <div class="legend">
-  <span><span class="leg-dot" style="background:#00ff88"></span>RARA 85+</span>
-  <span><span class="leg-dot" style="background:#00cc66"></span>BOM 65+</span>
-  <span><span class="leg-dot" style="background:#ffcc00"></span>PERIGOSO 40+</span>
-  <span><span class="leg-dot" style="background:#ff3355"></span>ARRISCADO 20+</span>
-  <span><span class="leg-dot" style="background:#333"></span>ULTRA &lt;20</span>
+  <span><span class="ld" style="background:#00ff88"></span>RARA 85+</span>
+  <span><span class="ld" style="background:#00cc66"></span>BOM 65+</span>
+  <span><span class="ld" style="background:#ffcc00"></span>PERIGOSO 40+</span>
+  <span><span class="ld" style="background:#ff3355"></span>ARRISCADO 20+</span>
+  <span><span class="ld" style="background:#333"></span>ULTRA &lt;20</span>
 </div>
-
-<div id="alert" class="alert-box"></div>
-<div id="app"><div class="loading">CARREGANDO<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div></div>
-
-<footer>TIRO SUPREMO · 5 CAMADAS · EMA 10/21 · ATR 20 · WICK · MOMENTUM · 30s</footer>
+<div id="alrt" class="alert"></div>
+<div id="app" style="padding:20px;text-align:center;font-family:'Share Tech Mono',monospace;color:#4a6080;font-size:12px;letter-spacing:2px">CARREGANDO...</div>
+<footer>TIRO SUPREMO · 5 CAMADAS · EMA 10/21 · ATR 20 · WICK · 30s</footer>
 
 <script>
-const PAIRS = ['BTCUSDT','ETHUSDT','SOLUSDT','BNBUSDT','XRPUSDT','DOGEUSDT','ADAUSDT','AVAXUSDT','LINKUSDT','DOTUSDT'];
-const NAMES = {BTCUSDT:'BTC',ETHUSDT:'ETH',SOLUSDT:'SOL',BNBUSDT:'BNB',XRPUSDT:'XRP',DOGEUSDT:'DOGE',ADAUSDT:'ADA',AVAXUSDT:'AVAX',LINKUSDT:'LINK',DOTUSDT:'DOT'};
+const PAIRS=['BTCUSDT','ETHUSDT','SOLUSDT','BNBUSDT','XRPUSDT','DOGEUSDT','ADAUSDT','AVAXUSDT','LINKUSDT','DOTUSDT'];
+const NAMES={BTCUSDT:'BTC',ETHUSDT:'ETH',SOLUSDT:'SOL',BNBUSDT:'BNB',XRPUSDT:'XRP',DOGEUSDT:'DOGE',ADAUSDT:'ADA',AVAXUSDT:'AVAX',LINKUSDT:'LINK',DOTUSDT:'DOT'};
+const LC={RARA:'#00ff88',BOM:'#00cc66',PERIGOSO:'#ffcc00',ARRISCADO:'#ff3355',ULTRA:'#222'};
+const EM={RARA:'🎯',BOM:'🟢',PERIGOSO:'🟡',ARRISCADO:'🔴',ULTRA:'⚫'};
 
-function calcEMA(arr, p) {
-  if(arr.length < p) return null;
-  const k = 2/(p+1);
-  let e = arr.slice(0,p).reduce((a,b)=>a+b,0)/p;
-  for(let i=p;i<arr.length;i++) e = arr[i]*k + e*(1-k);
+function ema(a,p){
+  if(a.length<p)return null;
+  const k=2/(p+1);
+  let e=a.slice(0,p).reduce((x,y)=>x+y,0)/p;
+  for(let i=p;i<a.length;i++)e=a[i]*k+e*(1-k);
   return e;
 }
 
-function emaLayer(closes) {
-  const e10 = calcEMA(closes, 10);
-  const e21 = calcEMA(closes, 21);
-  if(!e10||!e21) return { pts:0, e10:0, e21:0, bullish:false };
-  const dist = (e10 - e21) / e21 * 100;
-  const bullish = e10 > e21;
-  const raw = bullish ? Math.min(25, (dist / 0.5) * 25) : 0;
-  return { pts: Math.max(0, raw), e10, e21, bullish, dist };
-}
+function score(cc){
+  if(!cc||cc.length<30)return null;
+  const cl=cc.map(c=>+c[4]);
+  const e10=ema(cl,10), e21=ema(cl,21);
+  if(!e10||!e21)return null;
 
-function slopeLayer(closes) {
-  if(closes.length < 13) return { pts:0, slope:0 };
-  const e_now  = calcEMA(closes, 10);
-  const e_prev = calcEMA(closes.slice(0,-1), 10);
-  const e_pp   = calcEMA(closes.slice(0,-2), 10);
-  if(!e_now||!e_prev||!e_pp) return { pts:0, slope:0 };
-  const slope1 = e_now  - e_prev;
-  const slope2 = e_prev - e_pp;
-  const accel  = slope1 - slope2;
-  const slope  = slope1 / e_pp * 100;
-  let pts = 0;
-  if(slope > 0) pts = Math.min(20, (slope / 0.05) * 20);
-  if(accel > 0) pts = Math.min(20, pts * 1.2);
-  return { pts: Math.max(0, pts), slope };
-}
-
-function atrLayer(candles) {
-  if(candles.length < 42) return { pts:0, ratio:1 };
-  const trs = [];
-  for(let i=1;i<candles.length;i++){
-    const h=+candles[i][2], l=+candles[i][3], pc=+candles[i-1][4];
-    trs.push(Math.max(h-l, Math.abs(h-pc), Math.abs(l-pc)));
+  // ATR ratio
+  const trs=[];
+  for(let i=1;i<cc.length;i++){
+    const h=+cc[i][2],l=+cc[i][3],p=+cc[i-1][4];
+    trs.push(Math.max(h-l,Math.abs(h-p),Math.abs(l-p)));
   }
-  const atrNow  = trs.slice(-20).reduce((a,b)=>a+b,0)/20;
-  const atrBase = trs.slice(-40,-20).reduce((a,b)=>a+b,0)/20;
-  if(!atrBase) return { pts:0, ratio:1 };
-  const ratio = atrNow / atrBase;
-  let pts = 0;
-  if(ratio < 0.5)                        pts = 0;
-  else if(ratio > 2.0)                   pts = 0;
-  else if(ratio >= 0.7 && ratio <= 1.4)  pts = 20;
-  else if(ratio >= 0.5 && ratio < 0.7)   pts = ((ratio-0.5)/0.2)*20;
-  else if(ratio > 1.4 && ratio <= 2.0)   pts = ((2.0-ratio)/0.6)*20;
-  return { pts, ratio };
+  const an=trs.slice(-10).reduce((a,b)=>a+b,0)/10;
+  const ab=trs.slice(-20,-10).reduce((a,b)=>a+b,0)/10;
+  const ratio=ab>0?an/ab:1;
+
+  // Proteções
+  if(ratio>2.2)return{score:5,stage:'ULTRA',bullish:e10>e21,ratio,wick:0,price:+cc[cc.length-1][4],L:[0,0,0,0,0]};
+  if(ratio<0.4)return{score:10,stage:'ULTRA',bullish:e10>e21,ratio,wick:0,price:+cc[cc.length-1][4],L:[0,0,0,0,0]};
+
+  const bull=e10>e21;
+
+  // L1 — força EMA (0-25)
+  const dist=Math.abs(e10-e21)/e21*100;
+  const L1=bull?Math.min(25,(dist/0.4)*25):0;
+
+  // L2 — inclinação EMA (0-20)
+  const ep=ema(cl.slice(0,-1),10)||e10;
+  const slope=(e10-ep)/ep*100;
+  const L2=bull&&slope>0?Math.min(20,(slope/0.04)*20):0;
+
+  // L3 — ATR zona ideal (0-20)
+  let L3=0;
+  if(ratio>=0.6&&ratio<=1.5)L3=20;
+  else if(ratio>=0.4&&ratio<0.6)L3=((ratio-0.4)/0.2)*20;
+  else if(ratio>1.5&&ratio<=2.2)L3=((2.2-ratio)/0.7)*20;
+
+  // L4 — wick rejection (0-25)
+  const pv=cc[cc.length-2];
+  const o=+pv[1],h=+pv[2],l=+pv[3],c=+pv[4];
+  const body=Math.abs(c-o)||0.0001;
+  const uw=h-Math.max(o,c), dw=Math.min(o,c)-l;
+  const rw=(bull?dw:uw)/body;
+  const L4=rw>=2?25:rw>=1.5?18:rw>=1?10:rw>=0.5?4:0;
+
+  // L5 — momentum (0-10)
+  const rng=h-l||0.0001;
+  const pos=(c-l)/rng;
+  const L5=bull?(pos>=0.7?10:pos>=0.5?5:0):(pos<=0.3?10:pos<=0.5?5:0);
+
+  const total=Math.round(Math.min(100,L1+L2+L3+L4+L5));
+  const stage=total>=85?'RARA':total>=65?'BOM':total>=40?'PERIGOSO':total>=20?'ARRISCADO':'ULTRA';
+  return{score:total,stage,bullish:bull,ratio,wick:rw,price:+cc[cc.length-1][4],L:[Math.round(L1),Math.round(L2),Math.round(L3),Math.round(L4),Math.round(L5)]};
 }
 
-function wickLayer(candles, bullish) {
-  const prev = candles[candles.length-2];
-  if(!prev) return { pts:0, wick:0 };
-  const o=+prev[1], h=+prev[2], l=+prev[3], c=+prev[4];
-  const body = Math.abs(c-o);
-  if(body === 0) return { pts:0, wick:0 };
-  const upWick = h - Math.max(o,c);
-  const dnWick = Math.min(o,c) - l;
-  const relevantWick = bullish ? dnWick : upWick;
-  const ratio = relevantWick / body;
-  let pts = 0;
-  if(ratio >= 2.0)      pts = 25;
-  else if(ratio >= 1.5) pts = 18;
-  else if(ratio >= 1.0) pts = 10;
-  else if(ratio >= 0.5) pts = 4;
-  return { pts, wick: ratio };
+function render(res){
+  const alrt=document.getElementById('alrt');
+  const rara=res.filter(r=>r.d?.stage==='RARA');
+  const bom=res.filter(r=>r.d?.stage==='BOM');
+  const ruim=res.filter(r=>r.d&&['ARRISCADO','ULTRA'].includes(r.d.stage));
+  if(rara.length){alrt.className='alert show RARA';alrt.textContent=`🎯 TIRO SUPREMO! ${rara.map(r=>NAMES[r.p]).join(', ')} — Setup raro!`}
+  else if(bom.length){alrt.className='alert show BOM';alrt.textContent=`🟢 Márcio, o mar está para peixe! ${bom.map(r=>NAMES[r.p]).join(', ')}`}
+  else if(ruim.length>=8){alrt.className='alert show ULTRA';alrt.textContent='⚫ Toma o chimarrão ☕ — Mercado sem condição.'}
+  else{alrt.className='alert show PERIGOSO';alrt.textContent='🟡 Mercado misto. Analise bem antes de entrar.'}
+
+  const MX=[25,20,20,25,10];
+  document.getElementById('app').innerHTML='<div class="grid">'+res.map(r=>{
+    if(!r.d)return`<div class="card VAZIO"><div class="ct"><div class="pair">${NAMES[r.p]}</div><div class="sc ULTRA">--</div></div><div class="bar"><div class="bf ULTRA" style="width:0%"></div></div><div class="sr"><div class="sl ULTRA">SEM DADOS</div></div></div>`;
+    const{score:s,stage,bullish,ratio,wick,price,L}=r.d;
+    const pf=price>100?price.toFixed(2):price>1?price.toFixed(4):price.toFixed(6);
+    const tc=bullish?'#00cc66':'#ff3355';
+    const lc=LC[stage];
+    const dots=L.map((v,i)=>{const pct=v/MX[i];const bg=pct>0.6?lc:pct>0.3?'#2a3a50':'#111820';return`<div class="dot" style="background:${bg}"></div>`;}).join('');
+    return`<div class="card ${stage}"><div class="ct"><div class="pair">${NAMES[r.p]}</div><div class="sc ${stage}">${s}</div></div><div class="bar"><div class="bf ${stage}" style="width:${s}%"></div></div><div class="dots">${dots}</div><div class="sr"><div class="sl ${stage}">${EM[stage]} ${stage}</div><div class="pr">$${pf}</div></div><div class="mt"><span style="color:${tc}">${bullish?'▲ ALTA':'▼ BAIXA'}</span><span>ATR ${ratio.toFixed(2)}x</span><span>W ${wick.toFixed(1)}x</span></div></div>`;
+  }).join('')+'</div>';
 }
 
-function momentumLayer(candles, bullish) {
-  const prev = candles[candles.length-2];
-  if(!prev) return { pts:0, mom:0 };
-  const h=+prev[2], l=+prev[3], c=+prev[4];
-  const range = h - l;
-  if(range === 0) return { pts:0, mom:0 };
-  const pos = (c - l) / range;
-  let pts = 0;
-  if(bullish) pts = pos >= 0.7 ? 10 : pos >= 0.5 ? 5 : 0;
-  else        pts = pos <= 0.3 ? 10 : pos <= 0.5 ? 5 : 0;
-  return { pts, mom: pos };
+async function fetch1(p){
+  try{
+    const r=await fetch(`https://api.binance.com/api/v3/klines?symbol=${p}&interval=1m&limit=30`);
+    if(!r.ok)throw 0;
+    return{p,d:score(await r.json())};
+  }catch{return{p,d:null};}
 }
 
-function calcScore(candles) {
-  if(!candles || candles.length < 45) return null;
-  const closes = candles.map(c=>+c[4]);
-  const L1 = emaLayer(closes);
-  const L3 = atrLayer(candles);
-  if(L3.ratio > 2.0) return buildResult(3,  L1, {pts:0,slope:0}, L3, {pts:0,wick:0}, {pts:0,mom:0}, candles);
-  if(L3.ratio < 0.4) return buildResult(8,  L1, {pts:0,slope:0}, L3, {pts:0,wick:0}, {pts:0,mom:0}, candles);
-  if(!L1.bullish)    return buildResult(null,L1, {pts:0,slope:0}, L3, {pts:0,wick:0}, {pts:0,mom:0}, candles);
-  const L2 = slopeLayer(closes);
-  const L4 = wickLayer(candles, L1.bullish);
-  const L5 = momentumLayer(candles, L1.bullish);
-  const total = L1.pts + L2.pts + L3.pts + L4.pts + L5.pts;
-  return buildResult(total, L1, L2, L3, L4, L5, candles);
+async function update(){
+  const u=document.getElementById('upd');
+  u.textContent='● ATUALIZANDO...';u.className='upd on';
+  const res=await Promise.all(PAIRS.map(fetch1));
+  render(res);
+  u.className='upd';
+  u.textContent=`● PRÓXIMA ATUALIZAÇÃO ${new Date(Date.now()+30000).toLocaleTimeString('pt-BR')}`;
 }
 
-function buildResult(total, L1, L2, L3, L4, L5, candles) {
-  const price = +candles[candles.length-1][4];
-  const score = total === null
-    ? Math.round(L1.pts + L3.pts)
-    : Math.round(Math.min(100, Math.max(0, total)));
-  let stage;
-  if(score >= 85)      stage = 'RARA';
-  else if(score >= 65) stage = 'BOM';
-  else if(score >= 40) stage = 'PERIGOSO';
-  else if(score >= 20) stage = 'ARRISCADO';
-  else                 stage = 'ULTRA';
-  return {
-    score, stage, price,
-    bullish: L1.bullish,
-    atrRatio: L3.ratio,
-    wick: L4.wick || 0,
-    layers: [Math.round(L1.pts), Math.round(L2.pts), Math.round(L3.pts), Math.round(L4.pts), Math.round(L5.pts)]
-  };
-}
-
-const EMOJI = { RARA:'🎯', BOM:'🟢', PERIGOSO:'🟡', ARRISCADO:'🔴', ULTRA:'⚫' };
-const LAYER_COLOR
+setInterval(()=>document.getElementById('clock').textContent=new Date().toLocaleTimeString('pt-BR'),1000);
+document.getElementById('clock').textContent=new Date().toLocaleTimeString('pt-BR');
+update();
+setInterval(update,30000);
+</script>
+</body>
+</html>
